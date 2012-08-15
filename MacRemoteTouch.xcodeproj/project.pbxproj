@@ -13,6 +13,7 @@
 		D94BD95715DC0619004A758C /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = D94BD95515DC0619004A758C /* Credits.rtf */; };
 		D94BD95A15DC0619004A758C /* MacRemoteTouchAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D94BD95915DC0619004A758C /* MacRemoteTouchAppDelegate.m */; };
 		D94BD95D15DC0619004A758C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D94BD95B15DC0619004A758C /* MainMenu.xib */; };
+		D94BD96D15DC0658004A758C /* Server.m in Sources */ = {isa = PBXBuildFile; fileRef = D94BD96C15DC0658004A758C /* Server.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		D94BD95815DC0619004A758C /* MacRemoteTouchAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MacRemoteTouchAppDelegate.h; sourceTree = "<group>"; };
 		D94BD95915DC0619004A758C /* MacRemoteTouchAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MacRemoteTouchAppDelegate.m; sourceTree = "<group>"; };
 		D94BD95C15DC0619004A758C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D94BD96B15DC0658004A758C /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server.h; sourceTree = "<group>"; };
+		D94BD96C15DC0658004A758C /* Server.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Server.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +85,8 @@
 		D94BD94C15DC0619004A758C /* MacRemoteTouch */ = {
 			isa = PBXGroup;
 			children = (
+				D94BD96B15DC0658004A758C /* Server.h */,
+				D94BD96C15DC0658004A758C /* Server.m */,
 				D94BD95815DC0619004A758C /* MacRemoteTouchAppDelegate.h */,
 				D94BD95915DC0619004A758C /* MacRemoteTouchAppDelegate.m */,
 				D94BD95B15DC0619004A758C /* MainMenu.xib */,
@@ -169,6 +174,7 @@
 			files = (
 				D94BD95315DC0619004A758C /* main.m in Sources */,
 				D94BD95A15DC0619004A758C /* MacRemoteTouchAppDelegate.m in Sources */,
+				D94BD96D15DC0658004A758C /* Server.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +298,7 @@
 				D94BD96215DC0619004A758C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
