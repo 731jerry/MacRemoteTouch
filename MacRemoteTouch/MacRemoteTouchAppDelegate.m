@@ -98,7 +98,14 @@
         self.message = @"no data received";
     }
 	
-	
+    // touch pad //
+	if ([message ]) {
+		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"iTunes\" to play"];
+		[run executeAndReturnError:nil];
+	}
+    
+    
+    
 	//iTunes
 	if ([message isEqual:@"iTunesPlay"]) {
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"iTunes\" to play"];
