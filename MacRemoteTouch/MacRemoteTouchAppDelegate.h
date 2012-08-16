@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Server.h"
+#import "MouseTools.h"
 
 @interface MacRemoteTouchAppDelegate : NSObject <NSApplicationDelegate, ServerDelegate>
 {
@@ -20,6 +21,8 @@
 	BOOL isConnectedToService;
 	
 	NSAppleScript *iTunesPlay;
+    
+   
 }
 
 

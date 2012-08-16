@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D90684D515DC488600EA2D4F /* MouseTools.m in Sources */ = {isa = PBXBuildFile; fileRef = D90684D415DC488600EA2D4F /* MouseTools.m */; };
 		D94BD94715DC0619004A758C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94BD94615DC0619004A758C /* Cocoa.framework */; };
 		D94BD95115DC0619004A758C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D94BD94F15DC0619004A758C /* InfoPlist.strings */; };
 		D94BD95315DC0619004A758C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D94BD95215DC0619004A758C /* main.m */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D90684D415DC488600EA2D4F /* MouseTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTools.m; sourceTree = "<group>"; };
+		D90684D615DC48D800EA2D4F /* MouseTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseTools.h; path = ../MouseTools.h; sourceTree = "<group>"; };
 		D94BD94215DC0619004A758C /* MacRemoteTouch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacRemoteTouch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94BD94615DC0619004A758C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D94BD94915DC0619004A758C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -46,6 +49,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D90684D715DC492C00EA2D4F /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				D90684D615DC48D800EA2D4F /* MouseTools.h */,
+				D90684D415DC488600EA2D4F /* MouseTools.m */,
+				D94BD96B15DC0658004A758C /* Server.h */,
+				D94BD96C15DC0658004A758C /* Server.m */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
 		D94BD93715DC0619004A758C = {
 			isa = PBXGroup;
 			children = (
@@ -85,8 +99,7 @@
 		D94BD94C15DC0619004A758C /* MacRemoteTouch */ = {
 			isa = PBXGroup;
 			children = (
-				D94BD96B15DC0658004A758C /* Server.h */,
-				D94BD96C15DC0658004A758C /* Server.m */,
+				D90684D715DC492C00EA2D4F /* lib */,
 				D94BD95815DC0619004A758C /* MacRemoteTouchAppDelegate.h */,
 				D94BD95915DC0619004A758C /* MacRemoteTouchAppDelegate.m */,
 				D94BD95B15DC0619004A758C /* MainMenu.xib */,
@@ -175,6 +188,7 @@
 				D94BD95315DC0619004A758C /* main.m in Sources */,
 				D94BD95A15DC0619004A758C /* MacRemoteTouchAppDelegate.m in Sources */,
 				D94BD96D15DC0658004A758C /* Server.m in Sources */,
+				D90684D515DC488600EA2D4F /* MouseTools.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
