@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "Server.h"
 #import "MouseTools.h"
+#import "ConvertCode.c"
+#import "ConvertCode.h"
 
 @interface MacRemoteTouchAppDelegate : NSObject <NSApplicationDelegate, ServerDelegate>
 {

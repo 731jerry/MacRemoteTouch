@@ -25,9 +25,11 @@ void moveMouseToPoint(float x, float y);
 void stepMouseToPoint(float x, float y, int numSteps);
 void mouseLocation(BOOL isTopCoordinates);
 
-void moveMouseWithOffset(float x, float y); //
+void moveMouseWithCoordinateOffset(float x, float y); //
+void moveMouseWithOffsetDistance(float distance);
 void moveMouse(float x, float y); //
-NSPoint mouseLocationWithNSEvent(); //
+NSPoint mouseLocationWithServerBottomLeft(); //
+NSPoint mouseLocationWithServerTopLeft(); //
 // helpers
 BOOL isPointOnAScreen(NSPoint point, NSScreen** theScreen);
 void getXYStringCoordinatesFromArgs(NSString** x, NSString** y);
@@ -37,6 +39,7 @@ void printUsage();
 // global variables
 CGEventTapLocation tapLocation;
 CGEventSourceRef sourceRef;
+float mouseFlexibility; // mouse flexibility
 
 
 #endif

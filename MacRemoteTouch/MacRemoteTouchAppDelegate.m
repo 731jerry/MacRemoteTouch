@@ -126,9 +126,9 @@
         moveMouseToPoint(locationX, locationY);
 	}
     
-    if ([message hasPrefix:@"LocationOffset:"]){
+    if ([message hasPrefix:@"LocCoorOffset:"]){
         self.message = @"Mouse Moving";
-        NSString *locationOffsetString = [message substringFromIndex:15];
+        NSString *locationOffsetString = [message substringFromIndex:14];
         NSArray *locationCoordinateOffset = [locationOffsetString componentsSeparatedByString:@"+"];
         
         float offsetX = [[locationCoordinateOffset objectAtIndex:0] floatValue];
@@ -136,8 +136,16 @@
         //        CGFloat locationX = [locationCoordinate stringAtIndex:0];
         //        [self touchPadMove:locationX :locationY];
         
+        mouseFlexibility = 5; // set mouse flexibility
+        moveMouseWithCoordinateOffset(offsetX, offsetY);
+	}
+    
+    if ([message hasPrefix:@"LocOffsetDis:"]){
+        self.message = @"Mouse Moving";
+        NSString *locationOffsetDistanceString = [message substringFromIndex:13];
+        float distance = [locationOffsetDistanceString floatValue];
         
-        moveMouseWithOffset(offsetX, offsetY);
+        moveMouseWithOffsetDistance(distance);
 	}
     
     
@@ -155,6 +163,136 @@
     if ([message isEqual:@"TwoFingerSingleTap"]) {
         self.message = @"Right click";
 		performRightClick();
+	}
+
+#pragma  mark -
+#pragma  mark keyboard
+    // KeyboardCode:
+    if ([message hasPrefix:@"KeyboardCode:"]) {
+        self.message = @"Keyboard Inputing";
+//        CGKeyCode keyCode = 0xffff;
+        NSString *keyboardCode = [message substringFromIndex:13];
+//        char keyboardCodeChar = [keyboardCode characterAtIndex:0];
+//        keyCode = keyCodeForChar(keyboardCodeChar);
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to keystroke \"%@\"", keyboardCode];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    // back space key code KeyboardBackSpaceCode
+    if ([message isEqual:@"KeyboardBackSpaceCode"]) {
+        self.message = @"Keyboard Inputing";
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 51"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+
+#pragma mark -
+    // ExitPresentation
+    if ([message isEqual:@"ExitPresentation"]) {
+        self.message = @"Exit Presentation";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 53"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // PresentationBegin
+    if ([message isEqual:@"PresentationBegin"]) {
+        self.message = @"Presentation Begin";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 96"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // KeynoteNext
+    if ([message isEqual:@"KeynoteNext"]) {
+        self.message = @"Next Slide";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 125"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // KeynoteBack
+    if ([message isEqual:@"KeynoteBack"]) {
+        self.message = @"Previous Slide";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 126"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+#pragma mark -
+    // gamePlayUpArrow
+    if ([message isEqual:@"gamePlayUpArrow"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 126"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayRightArrow
+    if ([message isEqual:@"gamePlayRightArrow"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 124"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayLeftArrow
+    if ([message isEqual:@"gamePlayLeftArrow"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 123"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayDownArrow
+    if ([message isEqual:@"gamePlayDownArrow"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 125"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayA -> 'j' key
+    if ([message isEqual:@"gamePlayA"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 8"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayB -> 'k' key
+    if ([message isEqual:@"gamePlayB"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 9"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayC -> 'u' key
+    if ([message isEqual:@"gamePlayC"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 3"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
+	}
+    
+    // gamePlayD -> 'i' key
+    if ([message isEqual:@"gamePlayD"]) {
+        self.message = @"Game Playing";
+		performRightClick();
+        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 5"];
+        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+        [run executeAndReturnError:nil];
 	}
     
 #pragma mark -

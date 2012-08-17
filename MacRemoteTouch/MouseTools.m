@@ -336,12 +336,33 @@ void stepMouseToPoint(float x, float y, int numSteps) {
 	}
 	moveMouseToPoint(x, y); // make sure we're at the proper location
 } // the mouse slowly moves from current position to new position incrementally, origin of CGPoint must be top-left
-void moveMouseWithOffset(float x, float y){
+void moveMouseWithCoordinateOffset(float x, float y){
     //CGWarpMouseCursorPosition(CGPointMake(x, y));
     tapLocation = kCGHIDEventTap; // used when specifying the tap location for CGEventPost
-	CGEventRef moveMouse = CGEventCreateMouseEvent(sourceRef, kCGEventMouseMoved, CGPointMake(mouseLocationWithNSEvent().x + x, mouseLocationWithNSEvent().y + y), 0);
+    
+    float screenWidth = [[NSScreen mainScreen] frame].size.width;
+    float screenHeight = [[NSScreen mainScreen] frame].size.height;
+    
+    float mousePointX = mouseLocationWithServerTopLeft().x - y * mouseFlexibility;
+    float mousePointY = mouseLocationWithServerTopLeft().y + x * mouseFlexibility;
+    
+    if (mousePointX > screenWidth) {
+        mousePointX = screenWidth;
+    }
+    if (mousePointY > screenHeight) {
+        mousePointY = screenHeight;
+    }
+    
+	CGEventRef moveMouse = CGEventCreateMouseEvent(sourceRef, kCGEventMouseMoved, CGPointMake(mousePointX, mousePointY), 0);
 	CGEventPost(tapLocation, moveMouse);
 	CFRelease(moveMouse);
+    
+    NSLog(@">>> x move to: %f, y move to: %f",mousePointX,mousePointY);
+}
+
+void moveMouseWithOffsetDistance(float distance){
+    //
+    NSLog(@"distance: >>> %f", distance);
 }
 
 void moveMouse(float x, float y){
@@ -351,10 +372,21 @@ void moveMouse(float x, float y){
 	CFRelease(moveMouse);
 }
 
-NSPoint mouseLocationWithNSEvent(){
+NSPoint mouseLocationWithServerBottomLeft(){
     NSPoint mouseLoc = [NSEvent mouseLocation];
     NSString* locString = [NSString stringWithFormat:@"%.0f %.0f", mouseLoc.x, mouseLoc.y];
+//    fprintf(stdout, "%s\n", [locString UTF8String]);
     NSLog(@"mouse location: %@", locString);
+    return mouseLoc;
+}
+
+NSPoint mouseLocationWithServerTopLeft(){
+    CGEventRef mouseEvent = CGEventCreate(NULL);
+    CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
+    NSString* locString = [NSString stringWithFormat:@"%.0f %.0f", (float)mouseLoc.x, (float)mouseLoc.y];
+//    fprintf(stdout, "%s\n", [locString UTF8String]);
+    NSLog(@"mouse location: %@", locString);
+    CFRelease(mouseEvent);
     return mouseLoc;
 }
 
@@ -363,12 +395,12 @@ void mouseLocation(BOOL isTopCoordinates) {
 	if (isTopCoordinates) {
 		CGEventRef mouseEvent = CGEventCreate(NULL);
 		CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
-		NSString* locString = [NSString stringWithFormat:@"%.0f\n%.0f", (float)mouseLoc.x, (float)mouseLoc.y];
+		NSString* locString = [NSString stringWithFormat:@"%.0f %.0f", (float)mouseLoc.x, (float)mouseLoc.y];
 		fprintf(stdout, "%s\n", [locString UTF8String]);
 		CFRelease(mouseEvent);
 	} else {
 		NSPoint mouseLoc = [NSEvent mouseLocation];
-		NSString* locString = [NSString stringWithFormat:@"%.0f\n%.0f", mouseLoc.x, mouseLoc.y];
+		NSString* locString = [NSString stringWithFormat:@"%.0f %.0f", mouseLoc.x, mouseLoc.y];
 		fprintf(stdout, "%s\n", [locString UTF8String]);
 	}
 } // print the current mouse location to stdout

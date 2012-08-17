@@ -15,6 +15,8 @@
 		D94BD95A15DC0619004A758C /* MacRemoteTouchAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D94BD95915DC0619004A758C /* MacRemoteTouchAppDelegate.m */; };
 		D94BD95D15DC0619004A758C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D94BD95B15DC0619004A758C /* MainMenu.xib */; };
 		D94BD96D15DC0658004A758C /* Server.m in Sources */ = {isa = PBXBuildFile; fileRef = D94BD96C15DC0658004A758C /* Server.m */; };
+		D9AC00AD15DE498700A4495F /* ConvertCode.c in Sources */ = {isa = PBXBuildFile; fileRef = D9AC00AC15DE498700A4495F /* ConvertCode.c */; };
+		D9AC00AF15DE4B7500A4495F /* ConvertCode.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AC00AE15DE4B7500A4495F /* ConvertCode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,9 @@
 		D94BD95C15DC0619004A758C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D94BD96B15DC0658004A758C /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server.h; sourceTree = "<group>"; };
 		D94BD96C15DC0658004A758C /* Server.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Server.m; sourceTree = "<group>"; };
+		D9AC00AC15DE498700A4495F /* ConvertCode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ConvertCode.c; sourceTree = "<group>"; };
+		D9AC00AE15DE4B7500A4495F /* ConvertCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConvertCode.m; sourceTree = "<group>"; };
+		D9AC00B015DE4B8E00A4495F /* ConvertCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvertCode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +57,9 @@
 		D90684D715DC492C00EA2D4F /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				D9AC00AC15DE498700A4495F /* ConvertCode.c */,
+				D9AC00AE15DE4B7500A4495F /* ConvertCode.m */,
+				D9AC00B015DE4B8E00A4495F /* ConvertCode.h */,
 				D90684D615DC48D800EA2D4F /* MouseTools.h */,
 				D90684D415DC488600EA2D4F /* MouseTools.m */,
 				D94BD96B15DC0658004A758C /* Server.h */,
@@ -189,6 +197,8 @@
 				D94BD95A15DC0619004A758C /* MacRemoteTouchAppDelegate.m in Sources */,
 				D94BD96D15DC0658004A758C /* Server.m in Sources */,
 				D90684D515DC488600EA2D4F /* MouseTools.m in Sources */,
+				D9AC00AD15DE498700A4495F /* ConvertCode.c in Sources */,
+				D9AC00AF15DE4B7500A4495F /* ConvertCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +285,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MacRemoteTouch/MacRemoteTouch-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MacRemoteTouch/MacRemoteTouch-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -287,6 +298,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MacRemoteTouch/MacRemoteTouch-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "MacRemoteTouch/MacRemoteTouch-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
