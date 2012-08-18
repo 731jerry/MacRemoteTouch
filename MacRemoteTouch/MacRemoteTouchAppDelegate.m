@@ -11,7 +11,7 @@
 #import <AppKit/AppKit.h>
 
 @interface MacRemoteTouchAppDelegate()
-@property (nonatomic) NSArray *locationCoordinateBeforeOffset;
+@property (nonatomic, assign) NSArray *locationCoordinateBeforeOffset;
 @end
 
 @implementation MacRemoteTouchAppDelegate
@@ -98,8 +98,18 @@
     NSLog(@"location: %f, %f", locationX, locationY);
 }
 
+- (void) runAppleScriptWithSource:(NSString *)souceSnippets ToShowMessageToServer:(NSString *)messageToServer {
+    self.message = messageToServer;
+    NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to %@", souceSnippets];
+    NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
+    [run executeAndReturnError:nil];
+}
+
 - (void)server:(Server *)server didAcceptData:(NSData *)data
 {
+    dispatch_queue_t acceptData = dispatch_queue_create("acceptData", NULL);
+    dispatch_async(acceptData, ^{
+
     NSLog(@"Server did accept data %@", data);
     NSString *message = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 	
@@ -137,7 +147,12 @@
         //        [self touchPadMove:locationX :locationY];
         
         mouseFlexibility = 5; // set mouse flexibility
-        moveMouseWithCoordinateOffset(offsetX, offsetY);
+        
+        dispatch_queue_t mouseMove = dispatch_queue_create("mouseMove", NULL);
+        dispatch_async(mouseMove, ^{
+            moveMouseWithCoordinateOffsetOnPortraitRotation(offsetX, offsetY);
+        });
+        dispatch_release(mouseMove);
 	}
     
     if ([message hasPrefix:@"LocOffsetDis:"]){
@@ -145,154 +160,144 @@
         NSString *locationOffsetDistanceString = [message substringFromIndex:13];
         float distance = [locationOffsetDistanceString floatValue];
         
-        moveMouseWithOffsetDistance(distance);
+        dispatch_queue_t mouseMove = dispatch_queue_create("mouseMove", NULL);
+        dispatch_async(mouseMove, ^{
+            moveMouseWithOffsetDistance(distance);
+        });
+        dispatch_release(mouseMove);
 	}
     
     
     // OneFingerSingleTap
     if ([message isEqual:@"OneFingerSingleTap"]) {
         self.message = @"Left click";
-		performLeftClickWithoutModKeys();
+        dispatch_queue_t leftClick = dispatch_queue_create("leftClick", NULL);
+        dispatch_async(leftClick, ^{
+            performLeftClickWithoutModKeys();
+        });
+        dispatch_release(leftClick);
+		
 	}
     // OneFingerDoubleTap
     if ([message isEqual:@"OneFingerDoubleTap"]) {
         self.message = @"Double click";
-		performDoubleLeftClick();
+        dispatch_queue_t leftDoubleClick = dispatch_queue_create("leftDoubleClick", NULL);
+        dispatch_async(leftDoubleClick, ^{
+            performDoubleLeftClick();
+        });
+        dispatch_release(leftDoubleClick);
 	}
     // TwoFingerSingleTap
     if ([message isEqual:@"TwoFingerSingleTap"]) {
         self.message = @"Right click";
-		performRightClick();
+        dispatch_queue_t rightClick = dispatch_queue_create("RightClick", NULL);
+        dispatch_async(rightClick, ^{
+            performRightClickWell();
+        });
+        dispatch_release(rightClick);
+		
+        NSLog(@"right click down");
 	}
 
 #pragma  mark -
 #pragma  mark keyboard
     // KeyboardCode:
     if ([message hasPrefix:@"KeyboardCode:"]) {
-        self.message = @"Keyboard Inputing";
+        
 //        CGKeyCode keyCode = 0xffff;
         NSString *keyboardCode = [message substringFromIndex:13];
 //        char keyboardCodeChar = [keyboardCode characterAtIndex:0];
 //        keyCode = keyCodeForChar(keyboardCodeChar);
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to keystroke \"%@\"", keyboardCode];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:[NSString stringWithFormat:@"keystroke \"%@\"", keyboardCode] ToShowMessageToServer:@"Keyboard Inputing"];
 	}
     // back space key code KeyboardBackSpaceCode
     if ([message isEqual:@"KeyboardBackSpaceCode"]) {
-        self.message = @"Keyboard Inputing";
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 51"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
-	}
-
-#pragma mark -
-    // ExitPresentation
-    if ([message isEqual:@"ExitPresentation"]) {
-        self.message = @"Exit Presentation";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 53"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 51" ToShowMessageToServer:@"Keyboard Inputing"];
 	}
     
-    // PresentationBegin
-    if ([message isEqual:@"PresentationBegin"]) {
-        self.message = @"Presentation Begin";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 96"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+    if ([message isEqualToString:@"KeyboardReturnCode"]) {
+        [self runAppleScriptWithSource:@"key code 36" ToShowMessageToServer:@"Keyboard Inputing"];
+    }
+        
+    if ([message isEqualToString:@"KeyboardSpaceCode"]){
+        [self runAppleScriptWithSource:@"key code 49" ToShowMessageToServer:@"Keyboard Inputing"];
+    }
+
+    // F14
+    if ([message isEqualToString:@"BrightDown"]){
+        [self runAppleScriptWithSource:@"key code 107" ToShowMessageToServer:@"Bright Down"];
+    }
+    // F15
+    if ([message isEqualToString:@"BrightUp"]){
+        [self runAppleScriptWithSource:@"key code 113" ToShowMessageToServer:@"Bright Up"];
+    }
+    if ([message isEqualToString:@"MissionControl"]){
+        [self runAppleScriptWithSource:@"key code 126 using control down" ToShowMessageToServer:@"Mission Control Key"];
+    }
+#pragma mark -
+    // ExitPresentation  keystroke \"h\" using command down"
+    if ([message isEqual:@"ExitPresentation"]) {
+        [self runAppleScriptWithSource:@"key code 53" ToShowMessageToServer:@"Exit Presentation"];
+	}
+    
+    // PresentationBeginFromFirstPage
+    if ([message isEqual:@"PresentationBeginFromFirstPage"]) {
+        [self runAppleScriptWithSource:@"key code 52 using {command down, shift down}" ToShowMessageToServer:@"Presentation Begin at 1st Slide"];
+	}
+    // PresentationBeginFromCurrentPage
+    if ([message isEqual:@"PresentationBeginFromCurrentPage"]) {
+        [self runAppleScriptWithSource:@"key code 52 using {command down}" ToShowMessageToServer:@"Presentation Begin at 1st Slide"];
 	}
     
     // KeynoteNext
     if ([message isEqual:@"KeynoteNext"]) {
-        self.message = @"Next Slide";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 125"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 125" ToShowMessageToServer:@"Next Slide"];
 	}
     
     // KeynoteBack
     if ([message isEqual:@"KeynoteBack"]) {
-        self.message = @"Previous Slide";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 126"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 126" ToShowMessageToServer:@"Previous Slide"];
 	}
 #pragma mark -
     // gamePlayUpArrow
     if ([message isEqual:@"gamePlayUpArrow"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 126"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 126" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayRightArrow
     if ([message isEqual:@"gamePlayRightArrow"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 124"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 124" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayLeftArrow
     if ([message isEqual:@"gamePlayLeftArrow"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 123"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"key code 123" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayDownArrow
     if ([message isEqual:@"gamePlayDownArrow"]) {
+        [self runAppleScriptWithSource:@"key code 125" ToShowMessageToServer:@"Game Playing"];
         self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 125"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
 	}
     
     // gamePlayA -> 'j' key
     if ([message isEqual:@"gamePlayA"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 8"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"j\"" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayB -> 'k' key
     if ([message isEqual:@"gamePlayB"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 9"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"k\"" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayC -> 'u' key
     if ([message isEqual:@"gamePlayC"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 3"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"u\"" ToShowMessageToServer:@"Game Playing"];
 	}
     
     // gamePlayD -> 'i' key
     if ([message isEqual:@"gamePlayD"]) {
-        self.message = @"Game Playing";
-		performRightClick();
-        NSString *source = [NSString stringWithFormat:@"tell application \"System Events\"  to key code 5"];
-        NSAppleScript *run = [[NSAppleScript alloc] initWithSource:source];
-        [run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"i\"" ToShowMessageToServer:@"Game Playing"];
 	}
     
 #pragma mark -
@@ -347,280 +352,96 @@
 //	}
 	
 	if ([message isEqual:@"FinderVol1"]) {
-        self.message = message;
+        self.message = @"set volume to 1";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"set volume 1"];
 		[run executeAndReturnError:nil];
 	}
 	if ([message isEqual:@"FinderVol2"]) {
-        self.message = message;
+        self.message = @"set volume 2";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"set volume 3"];
 		[run executeAndReturnError:nil];
 	}
 	if ([message isEqual:@"FinderVol3"]) {
-        self.message = message;
+        self.message = @"set volume 6";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"set volume 6"];
 		[run executeAndReturnError:nil];
 	}
 	
 	if ([message isEqual:@"FinderVol4"]) {
-        self.message = message;
+        self.message = @"set volume 10";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"set volume 10"];
 		[run executeAndReturnError:nil];
 	}
 	
 	
 	if ([message isEqual:@"cmdA"]) {
-        self.message = @"Command + A";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"a\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"a\" using command down" ToShowMessageToServer:@"Command + A"];
 	}
 	if ([message isEqual:@"cmdC"]) {
-        self.message = @"Command + C";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"c\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"c\" using command down" ToShowMessageToServer:@"Command + C"];
 	}
 	if ([message isEqual:@"cmdV"]) {
-        self.message = @"Command + V";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"v\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"v\" using command down" ToShowMessageToServer:@"Command + V"];
 	}
 	
 	if ([message isEqual:@"cmdZ"]) {
-        self.message = @"Command + Z";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"z\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"z\" using command down" ToShowMessageToServer:@"Command + Z"];
 	}
 	if ([message isEqual:@"cmdH"]) {
-        self.message = @"Command + H";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"h\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"h\" using command down" ToShowMessageToServer:@"Command + H"];
 	}
 	if ([message isEqual:@"cmdT"]) {
-        self.message = @"Command + T";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"t\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"t\" using command down" ToShowMessageToServer:@"Command + T"];
 	}
 	if ([message isEqual:@"cmdQ"]) {
-        self.message = @"Command + Q";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to keystroke \"q\" using command down"];
-		[run executeAndReturnError:nil];
+        [self runAppleScriptWithSource:@"keystroke \"q\" using command down" ToShowMessageToServer:@"Command + Q"];
 	}
     
-	if ([message isEqual:@"arrowU"]) {
-        self.message = @"Up Arrow";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 126"];
-		[run executeAndReturnError:nil];
+    // shiftButtonAction
+    if ([message isEqual:@"shiftButtonAction"]) {
+        [self runAppleScriptWithSource:@"key code 56" ToShowMessageToServer:@"Shift Key"];
 	}
-	if ([message isEqual:@"arrowD"]) {
-        self.message = @"Down Arrow";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 125 "];
-		[run executeAndReturnError:nil];
+    
+    // CommandSpaceKey
+	if ([message isEqual:@"CommandSpaceKey"]) {
+        [self runAppleScriptWithSource:@"key code 49 using command down" ToShowMessageToServer:@"Command Space"];
 	}
-	if ([message isEqual:@"arrowL"]) {
-        self.message = @"Left Arrow";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 123"];
-		[run executeAndReturnError:nil];
+    
+    // TabPrevious
+    if ([message isEqual:@"TabPrevious"]) {
+        [self runAppleScriptWithSource:@"key code 48 using shift down" ToShowMessageToServer:@"Previous Tab"];
 	}
-	if ([message isEqual:@"arrowR"]) {
-        self.message = @"Right Arrow";
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 124"];
-		[run executeAndReturnError:nil];
+    
+    // TabNext
+    if ([message isEqual:@"TabNext"]) {
+        [self runAppleScriptWithSource:@"key code 48" ToShowMessageToServer:@"Next Tab"];
 	}
-	if ([message isEqual:@"Delete"]) {
-        self.message = message;
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 51"];
-		[run executeAndReturnError:nil];
+    
+    // FOneKey
+    if ([message isEqual:@"FOneKey"]) {
+        [self runAppleScriptWithSource:@"key code 122" ToShowMessageToServer:@"F1 Key"];
 	}
-	if ([message isEqual:@"Enter"]) {
-        self.message = message;
-		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 36"];
-		[run executeAndReturnError:nil];
+    
+    // FTwoKey
+    if ([message isEqual:@"FTwoKey"]) {
+        [self runAppleScriptWithSource:@"key code 120" ToShowMessageToServer:@"F2 Key"];
 	}
-	
-//	if ([message isEqual:@"a"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"a\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"b"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"b\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"c"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"c\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"d"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"d\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"e"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"e\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"f"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"f\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"g"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"g\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"h"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"h\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"i"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"i\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"j"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"k\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"l"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"l\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"m"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"m\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"n"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"n\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"o"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"o\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"p"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"p\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"q"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"q\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"r"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"r\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"s"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"s\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"t"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"t\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"u"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"u\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"v"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"v\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"w"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"w\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"x"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"x\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"y"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"y\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"z"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"z\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	
-//	if ([message isEqual:@"."]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \".\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@","]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \",\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"?"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"?\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"/"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"/\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"!"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"!\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"<"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"<\""];
-//		[run executeAndReturnError:nil];
-//	}if ([message isEqual:@">"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \">\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"{"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"{\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	if ([message isEqual:@"}"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to keystroke \"}\""];
-//		[run executeAndReturnError:nil];
-//	}
-//	
-//	if ([message isEqual:@"Tab"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to key code 48"];
-//		[run executeAndReturnError:nil];
-//	}
-//	
-//	if ([message isEqual:@"space"]) {
-//        self.message = message;
-//		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\"  to key code 49"];
-//		[run executeAndReturnError:nil];
-//	}
-//	
-//	
+    
+    // FThreeKey
+    if ([message isEqual:@"FThreeKey"]) {
+        [self runAppleScriptWithSource:@"key code 99" ToShowMessageToServer:@"F3 Key"];
+	}
+    
+    // FFiveKey
+    if ([message isEqual:@"FFiveKey"]) {
+        [self runAppleScriptWithSource:@"key code 96" ToShowMessageToServer:@"F5 Key"];
+	}
+    
+    // FSixKey
+    if ([message isEqual:@"FSixKey"]) {
+        [self runAppleScriptWithSource:@"key code 97" ToShowMessageToServer:@"F6 Key"];
+	}
+
 //	if ([message isEqual:@"iTunes"]) {
 //        self.message = message;
 //		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"iTunes\" activate end tell"];
@@ -657,6 +478,8 @@
 //		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"System Preferences\" activate"];
 //		[run executeAndReturnError:nil];
 //	}
+    });
+    dispatch_release(acceptData);
 }
 
 - (void)server:(Server *)server lostConnection:(NSDictionary *)errorDict
@@ -710,7 +533,7 @@
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
 	//NSLog(@"Count: %d", [self.services count]);
-    return [self.services count];
+    return (int)[self.services count];
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification;

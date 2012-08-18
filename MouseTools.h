@@ -17,6 +17,8 @@ void performLeftClick(CGEventFlags modKeys);
 void performLeftClickWithoutModKeys(); //
 void performDoubleLeftClick();
 void performRightClick();
+void performRightClickWell();
+void PostMouseEvent(CGMouseButton button, CGEventType type, const CGPoint point);
 CGEventFlags getModKeysValue(BOOL doShiftDown, BOOL doCommandDown, BOOL doOptionDown, BOOL doControlDown);
 void allModifiersUp();
 
@@ -26,6 +28,8 @@ void stepMouseToPoint(float x, float y, int numSteps);
 void mouseLocation(BOOL isTopCoordinates);
 
 void moveMouseWithCoordinateOffset(float x, float y); //
+void moveMouseWithCoordinateOffsetOnLandscapeLeftRotation(float x, float y); //
+void moveMouseWithCoordinateOffsetOnPortraitRotation(float x, float y);//
 void moveMouseWithOffsetDistance(float distance);
 void moveMouse(float x, float y); //
 NSPoint mouseLocationWithServerBottomLeft(); //

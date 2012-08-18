@@ -1,25 +1,14 @@
+//
+//  MouseTools.m
+//  MacRemoteTouch
+//
+//  Created by Jerry Zhu on 8/15/12.
+//  Copyright (c) 2012 Jerry Zhu. All rights reserved.
+//
+
 /*
  MouseTools
- Created 31 July 2010 by Hank McShane
- version 0.4
- requires Mac OS X 10.4 or higher
- 
- Updated 22 Feb 2011 by Hank McShane to v0.4
- - added a double click for the left mouse button
- 
- Updated 31 August 2010 by Hank McShane to v0.3
- - fixed and issue where negative x or y values were not being read properly
- - fixed issue where the mouse cursor wasn't updating properly
- 
- Updated 26 August 2010 by Hank McShane to v0.2
- - using simpler method to move the mouse: CGWarpMouseCursorPosition()
- - streamlined stepMouseToPoint()
- - added 64-bit builds for 10.5 and higher
- 
- This foundation tool will help you perform things with your mouse.
- By default, Screen Coordinates are measured from the top-left
- corner of the screen but with the [-b] switch they can be measured
- from the bottom-left.
+
  
  SWITCHES:
  [-h] return this help text
@@ -60,110 +49,6 @@
 
 #import "MouseTools.h"
 
-//int main (int argc, const char * argv[]) {
-//    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-//	
-//	tapLocation = kCGHIDEventTap; // used when specifying the tap location for CGEventPost
-//	sourceRef = CGEventSourceCreate(kCGEventSourceStatePrivate);
-//	
-//	// see if help is being requested
-//	NSArray* pInfo = [[NSArray alloc] initWithArray:[[NSProcessInfo processInfo] arguments]];
-//	if ([pInfo count] == 1 || [[pInfo objectAtIndex:1] isEqualToString:@"-h"]) {
-//		printUsage();
-//		[pInfo release];
-//		return 0;
-//	}
-//	
-//	
-//	float xPt, yPt;
-//	int numSteps;
-//	NSString* xString = nil;
-//	NSString* yString = nil;
-//	BOOL isTopCoordinates = YES;
-//	BOOL wantsMouseLocation = NO;
-//	BOOL shouldStepMouseMovement = NO;
-//	BOOL wantsMouseMoved = NO;
-//	BOOL shouldPerformLeftClick = NO;
-//	BOOL shouldPerformDoubleLeftClick = NO;
-//	BOOL shouldPerformRightClick = NO;
-//	BOOL useShift = NO;
-//	BOOL useControl = NO;
-//	BOOL useOption = NO;
-//	BOOL useCommand = NO;
-//	
-//	
-//	// determine all the BOOLs
-//	if ([pInfo containsObject:@"-b"]) isTopCoordinates = NO; // should we use bottom coordinates
-//	if ([pInfo containsObject:@"-location"]) wantsMouseLocation = YES; // should we return mouse location
-//	if ([pInfo containsObject:@"-x"]) { // wants mouse moved and should we step it to the new location?
-//		wantsMouseMoved = YES;
-//		getXYStringCoordinatesFromArgs(&xString, &yString);
-//		if (!xString || !yString) return 1; // there was an error getting one of the values
-//		xPt = [xString floatValue];
-//		yPt = [yString floatValue];
-//		if ([pInfo containsObject:@"-mouseSteps"]) {
-//			shouldStepMouseMovement = YES;
-//			numSteps = [[[NSUserDefaults standardUserDefaults] valueForKey:@"mouseSteps"] intValue];
-//		}
-//	}
-//	
-//	if ([pInfo containsObject:@"-rightClick"]) shouldPerformRightClick = YES; // perform right-click
-//	
-//	if ([pInfo containsObject:@"-leftClick"]) {
-//		shouldPerformLeftClick = YES; // perform left-click
-//		if ([pInfo containsObject:@"-shiftKey"]) useShift = YES;
-//		if ([pInfo containsObject:@"-commandKey"]) useCommand = YES;
-//		if ([pInfo containsObject:@"-optionKey"]) useOption = YES;
-//		if ([pInfo containsObject:@"-controlKey"]) useControl = YES;
-//	}
-//	
-//	if ([pInfo containsObject:@"-doubleLeftClick"]) shouldPerformDoubleLeftClick = YES;
-//	
-//	[pInfo release];
-//	
-//	// error check, we can only perform 1 type of click at a time so make sure only 1 is specified
-//	if (shouldPerformLeftClick && shouldPerformRightClick) {
-//		fprintf(stderr, "Error: cannot perform multiple mouse clicks. Only specify either a left or right click\n");
-//		return 1;
-//	}
-//	//stepMouseToPoint(400.0, 600.0, 500);
-//	
-//	if (wantsMouseLocation) {
-//		mouseLocation(isTopCoordinates);
-//	}
-//	
-//	if (wantsMouseMoved) {
-//		NSScreen* ptScreen = nil;
-//		if (isPointOnAScreen(NSMakePoint(xPt, yPt) , &ptScreen)) { // validate the point is on a screen before moving
-//			// if using bottom coords then we convert y point because out moving functions need top-style coords
-//			if (!isTopCoordinates) yPt = [ptScreen frame].size.height - yPt;
-//			
-//			if (shouldStepMouseMovement) {
-//				stepMouseToPoint(xPt, yPt, numSteps);
-//			} else {
-//				moveMouseToPoint(xPt, yPt);
-//				myDelay(0.02);
-//			}
-//		} else {
-//			fprintf(stderr, "Error: the point to move to is not on any of your current screens: %s, %s\n", [xString UTF8String], [yString UTF8String]);
-//			return 1;
-//		}
-//	}
-//	
-//	if (shouldPerformLeftClick) {
-//		CGEventFlags modKeys = getModKeysValue(useShift, useCommand, useOption, useControl); // modifier mask ie. shift-click
-//		performLeftClick(modKeys);
-//		if (!modKeys == 0) allModifiersUp();
-//	}
-//	
-//	if (shouldPerformDoubleLeftClick) performDoubleLeftClick();
-//	
-//	if (shouldPerformRightClick) performRightClick();
-//	
-//	CFRelease(sourceRef);
-//    [pool drain];
-//    return 0;
-//}
 
 //----------------------------------------
 //            MOUSE CLICKS
@@ -241,7 +126,7 @@ void performDoubleLeftClick() {
 } // double click the mouse NOTE:sometimes you have to perform a leftClick first to bring the target forward before the double cLick
 
 void performRightClick() {
-	performLeftClick(0); // we make sure the proper thing is selected by performing a left-click first
+	//performLeftClick(0); // we make sure the proper thing is selected by performing a left-click first
 	
 	// get the current mouse location
 	CGEventRef mouseEvent = CGEventCreate(NULL);
@@ -258,6 +143,25 @@ void performRightClick() {
 	CGEventPost(tapLocation, releaseMouse);
 	CFRelease(releaseMouse);
 } // right-click at current mouse location
+
+void performRightClickWell(){
+//    CGPoint point = [self getMousePointWithDeltaX:0 deltaY:0];
+    CGEventRef mouseEvent = CGEventCreate(NULL);
+	CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
+
+    PostMouseEvent(kCGMouseButtonRight, kCGEventMouseMoved, mouseLoc);
+	PostMouseEvent(kCGMouseButtonRight, kCGEventRightMouseDown, mouseLoc);
+	PostMouseEvent(kCGMouseButtonRight, kCGEventRightMouseUp, mouseLoc);
+    
+}
+
+void PostMouseEvent(CGMouseButton button, CGEventType type, const CGPoint point)
+{
+	CGEventRef theEvent = CGEventCreateMouseEvent(NULL, type, point, button);
+	//CGEventSetType(theEvent, type);
+	CGEventPost(kCGHIDEventTap, theEvent);
+	CFRelease(theEvent);
+}
 
 CGEventFlags getModKeysValue(BOOL doShiftDown, BOOL doCommandDown, BOOL doOptionDown, BOOL doControlDown) {
 	CGEventFlags modKeys = 0;
@@ -336,7 +240,7 @@ void stepMouseToPoint(float x, float y, int numSteps) {
 	}
 	moveMouseToPoint(x, y); // make sure we're at the proper location
 } // the mouse slowly moves from current position to new position incrementally, origin of CGPoint must be top-left
-void moveMouseWithCoordinateOffset(float x, float y){
+void moveMouseWithCoordinateOffsetOnLandscapeLeftRotation(float x, float y){
     //CGWarpMouseCursorPosition(CGPointMake(x, y));
     tapLocation = kCGHIDEventTap; // used when specifying the tap location for CGEventPost
     
@@ -360,6 +264,28 @@ void moveMouseWithCoordinateOffset(float x, float y){
     NSLog(@">>> x move to: %f, y move to: %f",mousePointX,mousePointY);
 }
 
+void moveMouseWithCoordinateOffsetOnPortraitRotation(float x, float y){
+    tapLocation = kCGHIDEventTap; // used when specifying the tap location for CGEventPost
+    
+    float screenWidth = [[NSScreen mainScreen] frame].size.width;
+    float screenHeight = [[NSScreen mainScreen] frame].size.height - 2;
+    
+    float mousePointX = mouseLocationWithServerTopLeft().x + x * mouseFlexibility;
+    float mousePointY = mouseLocationWithServerTopLeft().y + y * mouseFlexibility;
+    
+    if (mousePointX > screenWidth) {
+        mousePointX = screenWidth;
+    }
+    if (mousePointY > screenHeight) {
+        mousePointY = screenHeight;
+    }
+    
+	CGEventRef moveMouse = CGEventCreateMouseEvent(sourceRef, kCGEventMouseMoved, CGPointMake(mousePointX, mousePointY), 0);
+	CGEventPost(tapLocation, moveMouse);
+	CFRelease(moveMouse);
+    
+    NSLog(@">>> x move to: %f, y move to: %f",mousePointX,mousePointY);
+}
 void moveMouseWithOffsetDistance(float distance){
     //
     NSLog(@"distance: >>> %f", distance);
@@ -428,7 +354,7 @@ BOOL isPointOnAScreen(NSPoint point, NSScreen** theScreen) {
 
 void getXYStringCoordinatesFromArgs(NSString** x, NSString** y) {
 	NSArray* pInfo = [[NSArray alloc] initWithArray:[[NSProcessInfo processInfo] arguments]];
-	int pCount = [pInfo count];
+	int pCount = (int)[pInfo count];
 	NSString* xValue = nil;
 	NSString* yValue = nil;
 	
