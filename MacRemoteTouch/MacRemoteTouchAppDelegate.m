@@ -119,6 +119,17 @@
         self.message = @"no data received";
     }
 
+    // ConnectionTo:
+    if ([message hasPrefix:@"Connection To: "]){
+            
+//        NSString * messageFinal = [_server getLocalName];
+//        NSData *data = [messageFinal dataUsingEncoding:NSUTF8StringEncoding];
+//        NSError *error = nil;
+//        NSLog(@"%@",data);
+//        [_server sendData:data error:&error];
+        
+        self.message = message;
+    }
 #pragma mark -
 #pragma mark touch pad
     // touch pad move //
@@ -316,13 +327,13 @@
 	}
 	
 	if ([message isEqual:@"iTunesNext"]) {
-        self.message = @"Playing next song";
+        self.message = @"Selected next song";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"iTunes\" to next track"];
 		[run executeAndReturnError:nil];
 	}
 	
 	if ([message isEqual:@"iTunesPrevious"]) {
-        self.message = @"Playing the previous song";
+        self.message = @"Selected previous song";
 		NSAppleScript *run = [[NSAppleScript alloc] initWithSource:@"tell application \"iTunes\" to previous track"];
 		[run executeAndReturnError:nil];
 	}
@@ -496,7 +507,7 @@
 - (void)serviceAdded:(NSNetService *)service moreComing:(BOOL)more
 {
 	NSLog(@"Added a service: %@", [service name]);
-	self.message = [NSString stringWithFormat:@"Added a service: %@", [service name]];;//
+	self.message = [NSString stringWithFormat:@"Added a service: %@", [service name]];//
     [self.services addObject:service];
     if(!more) {
         [tableView reloadData];

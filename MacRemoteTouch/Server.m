@@ -231,6 +231,9 @@ static void SocketAcceptedConnectionCallBack(CFSocketRef socket,
     return successful;
 }
 
+- (NSString *) getLocalName{
+    return [_netService name];
+}
 // call this when the user has selected the remote service they want to connect to
 // should be one of the services sent to the delegate method
 // serviceAdded:moreComing: method

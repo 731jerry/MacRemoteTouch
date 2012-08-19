@@ -79,6 +79,7 @@ typedef enum {
 - (void)connectToRemoteService:(NSNetService *)selectedService;
 - (void)stop;
 - (void)stopBrowser;
+- (NSString *) getLocalName;
 
 @property(nonatomic, assign) id<ServerDelegate> delegate;
 @property(nonatomic, assign) uint8_t payloadSize; // how big of a buffer to send on

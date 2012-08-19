@@ -126,33 +126,40 @@ void performDoubleLeftClick() {
 } // double click the mouse NOTE:sometimes you have to perform a leftClick first to bring the target forward before the double cLick
 
 void performRightClick() {
-	//performLeftClick(0); // we make sure the proper thing is selected by performing a left-click first
+	performLeftClick(0); // we make sure the proper thing is selected by performing a left-click first
 	
 	// get the current mouse location
 	CGEventRef mouseEvent = CGEventCreate(NULL);
 	CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
 	CFRelease(mouseEvent);
-	
+	NSLog(@"get the current mouse location");
 	// click right-mouse
 	CGEventRef clickMouse = CGEventCreateMouseEvent(sourceRef, kCGEventRightMouseDown, mouseLoc, 0);
 	CGEventPost(tapLocation, clickMouse);
 	CFRelease(clickMouse);
-	
+	NSLog(@"click right-mouse");
 	// release
 	CGEventRef releaseMouse = CGEventCreateMouseEvent(sourceRef, kCGEventRightMouseUp, mouseLoc, 0);
 	CGEventPost(tapLocation, releaseMouse);
 	CFRelease(releaseMouse);
+    NSLog(@"release");
 } // right-click at current mouse location
 
 void performRightClickWell(){
+    NSLog(@"1");
+    performLeftClick(0);
+    NSLog(@"2");
 //    CGPoint point = [self getMousePointWithDeltaX:0 deltaY:0];
     CGEventRef mouseEvent = CGEventCreate(NULL);
+    NSLog(@"3");
 	CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
-
+    NSLog(@"4");
     PostMouseEvent(kCGMouseButtonRight, kCGEventMouseMoved, mouseLoc);
+    NSLog(@"5");
 	PostMouseEvent(kCGMouseButtonRight, kCGEventRightMouseDown, mouseLoc);
+    NSLog(@"6");
 	PostMouseEvent(kCGMouseButtonRight, kCGEventRightMouseUp, mouseLoc);
-    
+    NSLog(@"7");
 }
 
 void PostMouseEvent(CGMouseButton button, CGEventType type, const CGPoint point)
