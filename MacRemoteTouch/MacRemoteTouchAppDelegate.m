@@ -210,6 +210,49 @@
         NSLog(@"right click down");
 	}
 
+    // VerticalDistance
+    if ([message hasPrefix:@"VerticalDistance:"]){
+        self.message = @"Vertical Scrolling";
+        NSString *verticalDistance = [message substringFromIndex:17];
+        float distance = [verticalDistance floatValue];
+        NSLog(@"%@",message);
+        NSLog(@"Vertical:%f",distance);
+        dispatch_queue_t verticalScrolling =dispatch_queue_create("verticalScrolling", NULL);
+        dispatch_async(verticalScrolling, ^{
+            wheelScrollVertical(distance);
+        });
+        dispatch_release(verticalScrolling);
+    }
+        // HorizontalDistance
+        if ([message hasPrefix:@"HorizontalDistance:"]){
+            self.message = @"Horizontal Scrolling";
+            NSString *horizontalDistance = [message substringFromIndex:19];
+            float distance = [horizontalDistance floatValue];
+//            NSLog(@"%@",message);
+            NSLog(@"Horizontal:%f",distance);
+            dispatch_queue_t horizontalScrolling =dispatch_queue_create("horizontalScrolling", NULL);
+            dispatch_async(horizontalScrolling, ^{
+                wheelScrollHorizontal(distance);
+            });
+            dispatch_release(horizontalScrolling);
+        }
+        
+        // scroll
+        if ([message hasPrefix:@"Scroll:"]){
+            self.message = @"Scrolling";
+            NSLog(@"data:%@",message);
+            NSString *locationOffsetString = [message substringFromIndex:7];
+            NSArray *locationCoordinateOffset = [locationOffsetString componentsSeparatedByString:@"+"];
+            
+            float offsetX = [[locationCoordinateOffset objectAtIndex:0] floatValue];
+            float offsetY = [[locationCoordinateOffset objectAtIndex:1] floatValue];
+            
+            dispatch_queue_t scrolling = dispatch_queue_create("scrolling", NULL);
+            dispatch_async(scrolling, ^{
+                wheelScroll(offsetX, offsetY);
+            });
+            dispatch_release(scrolling);
+        }
 #pragma  mark -
 #pragma  mark keyboard
     // KeyboardCode:
@@ -246,6 +289,14 @@
         [self runAppleScriptWithSource:@"key code 126 using control down" ToShowMessageToServer:@"Mission Control Key"];
     }
 #pragma mark -
+    // NewFile
+    if ([message isEqual:@"NewFile"]) {
+        [self runAppleScriptWithSource:@"key code 45 using {command down, shift down}" ToShowMessageToServer:@"Add a New File"];
+    }
+    // CommandDelete
+    if ([message isEqual:@"CommandDelete"]) {
+        [self runAppleScriptWithSource:@"key code 51 using command down" ToShowMessageToServer:@"Command Delete"];
+    }
     // ExitPresentation  keystroke \"h\" using command down"
     if ([message isEqual:@"ExitPresentation"]) {
         [self runAppleScriptWithSource:@"key code 53" ToShowMessageToServer:@"Exit Presentation"];

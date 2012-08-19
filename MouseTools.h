@@ -34,6 +34,9 @@ void moveMouseWithOffsetDistance(float distance);
 void moveMouse(float x, float y); //
 NSPoint mouseLocationWithServerBottomLeft(); //
 NSPoint mouseLocationWithServerTopLeft(); //
+void wheelScrollVertical(float Vertical);//
+void wheelScrollHorizontal(float Horizontal);//
+void wheelScroll(float x, float y);//
 // helpers
 BOOL isPointOnAScreen(NSPoint point, NSScreen** theScreen);
 void getXYStringCoordinatesFromArgs(NSString** x, NSString** y);

@@ -338,6 +338,49 @@ void mouseLocation(BOOL isTopCoordinates) {
 	}
 } // print the current mouse location to stdout
 
+// CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, wheelCount, yScroll, xScroll);
+// kCGScrollEventUnitPixel
+void wheelScrollVertical(float Vertical){    
+    CFRelease(CGEventCreate(NULL));
+    CGEventRef event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, 1, -Vertical*30);
+//    CGEventRef event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, 2,-Vertical*30, Vertical);
+
+    CGEventSetType(event, kCGEventScrollWheel);
+    CGEventPost(kCGSessionEventTap, event);
+    CFRelease(event);
+}
+
+void wheelScrollHorizontal(float Horizontal){
+    //    CGEventRef mouseEvent = CGEventCreate(NULL);
+    //    CGPoint mouseLoc = CGEventGetLocation(mouseEvent);
+    
+//    NSLog(@"ho,,,,,,,,,,,,%f",Horizontal);
+//    CFRelease(CGEventCreate(NULL));
+//    CGEventRef event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, 2, 0.0, Horizontal*10);
+//    CGEventSetType(event, kCGEventScrollWheel);
+//    CGEventPost(kCGHIDEventTap, event);
+//    CFRelease(event);
+    
+    CFRelease(CGEventCreate(NULL));
+    CGEventRef event = CGEventCreate(NULL);
+    CGEventSetType(event, kCGEventScrollWheel);
+    CGEventSetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1, 0);
+    CGEventSetIntegerValueField(event, kCGScrollWheelEventDeltaAxis2, Horizontal);
+    CGEventSetIntegerValueField(event, kCGScrollWheelEventInstantMouser, 0);
+    CGEventSetType(event, kCGEventScrollWheel);
+    CGEventPost(kCGSessionEventTap, event);
+    CFRelease(event);
+}
+
+void wheelScroll(float x, float y){
+    CFRelease(CGEventCreate(NULL));
+    NSLog(@"ho,,,,,,,,,,,,%f,%f",x,y);
+    CGEventRef event = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, 2, -y*30, x*30);
+    CGEventSetType(event, kCGEventScrollWheel);
+    CGEventPost(kCGSessionEventTap, event);
+    CFRelease(event);
+}
+
 //----------------------------------------
 //            HELPERS
 //----------------------------------------
