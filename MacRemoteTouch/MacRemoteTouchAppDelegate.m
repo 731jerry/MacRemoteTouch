@@ -289,6 +289,15 @@
         [self runAppleScriptWithSource:@"key code 126 using control down" ToShowMessageToServer:@"Mission Control Key"];
     }
 #pragma mark -
+    // DesktopGoLeft
+    if ([message isEqual:@"DesktopGoLeft"]) {
+        [self runAppleScriptWithSource:@"key code 123 using control down" ToShowMessageToServer:@"Go To Left Destop"];
+    }
+    // DesktopGoRight
+    if ([message isEqual:@"DesktopGoRight"]) {
+        [self runAppleScriptWithSource:@"key code 124 using control down" ToShowMessageToServer:@"Go To Right Desktop"];
+    }
+        
     // NewFile
     if ([message isEqual:@"NewFile"]) {
         [self runAppleScriptWithSource:@"key code 45 using {command down, shift down}" ToShowMessageToServer:@"Add a New File"];
