@@ -1,11 +1,9 @@
 //
 //  Server.m
+//  MacRemoteTouch
 //
-//  Licensed under the Apache 2.0 license
-//  http://apache.org/licenses/LICENSE-2.0
-//
-//  Created by Bill Dudney on 2/20/09.
-//  Copyright 2009 Gala Factory Software LLC. All rights reserved.
+//  Created by Jerry Zhu on 8/15/12.
+//  Copyright (c) 2012 Jerry Zhu. All rights reserved.
 //
 
 #import "Server.h"

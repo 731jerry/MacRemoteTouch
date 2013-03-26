@@ -6,47 +6,6 @@
 //  Copyright (c) 2012 Jerry Zhu. All rights reserved.
 //
 
-/*
- MouseTools
-
- 
- SWITCHES:
- [-h] return this help text
- [-b] coordinates are measured from bottom-left corner of the screen
- [-location] return the current mouse location
- [-x xValue -y yValue] move the mouse to the {xValue, yValue} location
- [-mouseSteps numSteps] move mouse in number-of-steps to the location
- [-leftClick] perform a mouse left-click at the current mouse location
- [-doubleLeftClick] perform a mouse double-click with the left mouse button
- [-rightClick] perform a mouse right-click at the current mouse location
- [-shiftKey] shift key down, useful when performing a left-click event
- [-commandKey] command key down, useful when performing a left-click event
- [-optionKey] option key down, useful when performing a left-click event
- [-controlKey] control key down, useful when performing a left-click event
- 
- EXAMPLES:
- 1. get mouse location (measured from top-left)
- MouseTools -location
- 
- 2. get mouse location (measured from bottom-left)
- MouseTools -b -location
- 
- 3. move the mouse to a screen location
- MouseTools -x xValue -y yValue
- 
- 4. move the mouse in 1000 steps to a screen location
- MouseTools -x xValue -y yValue -mouseSteps 1000
- 
- 5. right-click the mouse at the current mouse position
- MouseTools -rightClick
- 
- 6. move the mouse to the given coordinates and perform a left-click
- MouseTools -x xValue -y yValue -leftClick
- 
- 7. move the mouse to the given coordinates and perform a shift-click
- MouseTools -x xValue -y yValue -leftClick -shiftKey
-*/
-
 #import "MouseTools.h"
 
 
